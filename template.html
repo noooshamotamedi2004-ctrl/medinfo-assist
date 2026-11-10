@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedInfo Assist – Medical Information enquiry prototype</title>
+<style>
+:root{--ink:#14213d;--muted:#5b6476;--line:#dfe3ea;--bg:#f5f7fa;--card:#fff;--teal:#0f766e;--teal-l:#e6f4f2;--red:#b42318;--red-l:#fdecea;--amber:#a15c07;--amber-l:#fff4e0;--green:#1a7f37;--green-l:#e7f6ea;--blue:#1d4ed8;--blue-l:#eaf0ff;--r:10px}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--ink);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:.2px}
+header .sub{color:#b8c2d6;font-size:12px}
+header .sp{flex:1}
+header label{font-size:12px;color:#b8c2d6}
+header select{margin-left:6px;padding:5px 8px;border-radius:6px;border:0;font:inherit}
+.banner{background:#fff8e1;color:#6b4e00;font-size:12.5px;padding:7px 20px;border-bottom:1px solid #f0e2b3}
+nav{display:flex;gap:2px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav button{border:0;background:none;padding:12px 14px;font:inherit;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+nav button.on{color:var(--ink);border-color:var(--teal);font-weight:600}
+main{padding:18px 20px;max-width:1500px;margin:0 auto}
+.view{display:none}.view.on{display:block}
+.ws{display:grid;grid-template-columns:290px minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media(max-width:1150px){.ws{grid-template-columns:260px minmax(0,1fr)}.ws .audit{grid-column:1/-1}}
+@media(max-width:760px){.ws{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 10px;font-weight:650}
+.card h3{font-size:15px;margin:0 0 6px}
+.q{list-style:none;margin:0;padding:0}
+.q li{padding:10px 10px;border-radius:8px;cursor:pointer;border:1px solid transparent;margin-bottom:4px}
+.q li:hover{background:var(--bg)}
+.q li.on{background:var(--teal-l);border-color:#b5ddd8}
+.q .t{font-size:13px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.q .m{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.c-red{background:var(--red-l);color:var(--red)}.c-amber{background:var(--amber-l);color:var(--amber)}.c-green{background:var(--green-l);color:var(--green)}.c-grey{background:#eef0f4;color:var(--muted)}.c-blue{background:var(--blue-l);color:var(--blue)}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:8px 14px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.btn:hover:not(:disabled){border-color:#b9c0cc}
+.btn.p{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn.w{color:var(--red);border-color:#f1c4bf}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:4px 10px;font-size:13px}
+.kv div:nth-child(odd){color:var(--muted)}
+.enq{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:14px;margin:8px 0;white-space:pre-wrap}
+.flag{border-left:3px solid;padding:6px 10px;margin:6px 0;border-radius:0 6px 6px 0;font-size:13px}
+.flag b{display:block}
+.flag.red{border-color:var(--red);background:var(--red-l)}.flag.amber{border-color:var(--amber);background:var(--amber-l)}.flag.info{border-color:#9aa4b5;background:#f1f3f7}
+.src{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:13px}
+.src.used{border-color:#9fd3cc;background:#f6fbfa}
+.src .h{display:flex;justify-content:space-between;gap:8px;font-weight:600}
+.src .meta{color:var(--muted);font-size:11.5px}
+textarea,input[type=text],input[type=password],select.f{width:100%;font:inherit;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+textarea{min-height:220px;resize:vertical;line-height:1.55}
+.gc{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}
+.gc td{border-top:1px solid var(--line);padding:6px 6px;vertical-align:top}
+.gc td:first-child{width:96px}
+.why{font-size:12.5px;color:var(--muted);margin-top:8px}
+.why li{margin:2px 0}
+.audit ol{list-style:none;padding:0;margin:0;font-size:12.5px}
+.audit li{border-left:2px solid var(--line);padding:2px 0 10px 10px;position:relative}
+.audit li::before{content:"";position:absolute;left:-5px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.audit .ts{color:var(--muted);font-size:11px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.stat .n{font-size:26px;font-weight:700}
+.stat .l{font-size:12px;color:var(--muted)}
+.bar{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px}
+.bar .lab{width:260px;flex:none}
+.bar .tr{flex:1;background:#eef0f4;border-radius:4px;height:14px;overflow:hidden}
+.bar .fi{height:100%;background:var(--teal)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th{text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:6px}
+table.t td{border-bottom:1px solid var(--line);padding:6px;vertical-align:top}
+.small{font-size:12px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+details summary{cursor:pointer;font-weight:600;font-size:13px}
+.modal{position:fixed;inset:0;background:rgba(20,33,61,.45);display:none;align-items:center;justify-content:center;z-index:10;padding:16px}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:12px;padding:18px;max-width:560px;width:100%}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;pointer-events:none}
+.toast.on{opacity:1}
+.prose{max-width:820px}.prose h3{margin-top:18px}
+code{background:#eef0f4;padding:1px 5px;border-radius:4px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>MedInfo Assist</h1><div class="sub">Medical Information enquiry assistant · Veltris Pharma (fictional)</div></div>
+  <div class="sp"></div>
+  <label>Signed in as
+    <select id="role"><option>MI Specialist</option><option>Medical Reviewer</option></select>
+  </label>
+</header>
+<div class="banner">Prototype for an interview exercise. All companies, products, documents, people and enquiries are fictional or synthetic. Not for clinical use.</div>
+<nav id="tabs">
+  <button data-v="ws" class="on">Enquiry workspace</button>
+  <button data-v="dash">Dashboard &amp; value</button>
+  <button data-v="tests">Test results</button>
+  <button data-v="kb">Approved sources</button>
+  <button data-v="about">How it works</button>
+</nav>
+<main>
+  <section class="view on" id="v-ws">
+    <div class="ws">
+      <div>
+        <div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Enquiry queue</h2><button class="btn p" id="newBtn">+ New</button></div>
+          <ul class="q" id="queue" style="margin-top:10px"></ul></div>
+      </div>
+      <div id="detail"></div>
+      <div class="audit"><div class="card"><h2>Audit trail – this enquiry</h2><ol id="audit"></ol>
+        <div class="row" style="margin-top:8px"><button class="btn" id="copyAudit">Copy full audit log (JSON)</button></div></div></div>
+    </div>
+  </section>
+  <section class="view" id="v-dash"></section>
+  <section class="view" id="v-tests"></section>
+  <section class="view" id="v-kb"></section>
+  <section class="view" id="v-about"></section>
+</main>
+
+<div class="modal" id="newModal"><div class="box">
+  <h3 style="margin-top:0">Log a new enquiry</h3>
+  <p class="small">Use synthetic text only. Personal data is redacted before triage, retrieval or drafting.</p>
+  <label class="small">Enquirer type</label>
+  <select class="f" id="nReq"><option>Healthcare professional</option><option>Pharmacist</option><option>Patient / public</option></select>
+  <label class="small" style="display:block;margin-top:8px">Product</label>
+  <select class="f" id="nProd"><option value="">Detect from text</option><option value="CRV">Corvalen</option><option value="AFX">Aeroflux</option></select>
+  <label class="small" style="display:block;margin-top:8px">Enquiry text</label>
+  <textarea id="nText" style="min-height:110px" placeholder="e.g. Can Corvalen be taken with grapefruit juice?"></textarea>
+  <div class="small" style="margin:6px 0">Try: <a href="#" data-ex="Can Corvalen be taken with grapefruit juice?">grapefruit</a> · <a href="#" data-ex="Is Aeroflux suitable for a 6 year old?">6-year-old</a> · <a href="#" data-ex="Since starting Corvalen my patient has developed a rash.">rash</a> · <a href="#" data-ex="Is Corvalen safe with alcohol?">alcohol</a></div>
+  <div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn" id="nCancel">Cancel</button><button class="btn p" id="nSave">Triage &amp; draft</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/*__CORE__*/
+</script>
+<script>
+/*__UI__*/
+</script>
+</body>
+</html>
